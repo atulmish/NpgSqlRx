@@ -4,13 +4,10 @@ namespace NpgSqlRx.Core
 {
     class Insert
     {
-        public Insert()
+        public Insert(string connectionString)
         {
-            using (var conn = new NpgsqlConnection(_connectionString))
+            using (var conn = new NpgsqlConnection(connectionString))
             {
-
-
-                // Insert some data
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = conn;
@@ -18,8 +15,6 @@ namespace NpgSqlRx.Core
                     cmd.Parameters.AddWithValue("p", "Hello world");
                     cmd.ExecuteNonQuery();
                 }
-
-                
             }
         }
     }

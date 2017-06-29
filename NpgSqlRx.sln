@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpgSqlRx", "src\NpgSqlRx\NpgSqlRx.csproj", "{105EAA69-491A-4055-A800-CF1385780ADC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHarness", "src\TestHarness\TestHarness.csproj", "{CF177856-CCFF-4548-A19F-46D083F611CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{105EAA69-491A-4055-A800-CF1385780ADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{105EAA69-491A-4055-A800-CF1385780ADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{105EAA69-491A-4055-A800-CF1385780ADC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF177856-CCFF-4548-A19F-46D083F611CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF177856-CCFF-4548-A19F-46D083F611CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF177856-CCFF-4548-A19F-46D083F611CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF177856-CCFF-4548-A19F-46D083F611CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

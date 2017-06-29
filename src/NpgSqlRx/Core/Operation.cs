@@ -5,7 +5,7 @@ using Npgsql;
 
 namespace NpgSqlRx.Core
 {
-    public class Operation<T> where T : new()
+    public class Operation
     {
         private readonly Connection _connection;
 
@@ -14,36 +14,34 @@ namespace NpgSqlRx.Core
             _connection = connection;
         }
 
-        public IObservable<T> Read(string query)
+        public IObservable<T> Read<T>(string query) where T : new()
         {
-            IObserver<T> observer = null;
-            var result = Observable.Create<T>(o =>
+            var result = Observable.Create<T>(observer =>
             {
-                observer = o;
+                var props = typeof(T).GetProperties();
+                using (var cmd = new NpgsqlCommand(query, _connection.Get()))
+                {
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var data = new T();
+                            foreach (var propertyInfo in props)
+                            {
+                                var col = reader[propertyInfo.Name];
+                                propertyInfo.SetValue(data, Convert.ChangeType(col, propertyInfo.PropertyType), null);
+                            }
+                            observer.OnNext(data);
+                        }
+                        observer.OnCompleted();
+                    }
+                }
                 return Disposable.Create(() =>
                 {
                     _connection.Dispose();
                 });
             });
-            var props = typeof (T).GetProperties();
-            using (var cmd = new NpgsqlCommand(query, _connection.Get()))
-            {
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        var data = new T();
-                        foreach (var propertyInfo in props)
-                        {
-                            var col = reader. GetOrdinal(propertyInfo.Name);
-                            propertyInfo.SetValue(data, Convert.ChangeType(col, propertyInfo.PropertyType), null);
-                            observer.OnNext(data);
-                        }
-                        Console.WriteLine(reader.GetString(0));
-                    }
-                    observer.OnCompleted();
-                }
-            }
+            
             return result;
         }
     }
