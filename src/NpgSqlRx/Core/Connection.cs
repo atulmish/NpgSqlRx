@@ -11,7 +11,6 @@ namespace NpgSqlRx.Core
         {
             _connection = new NpgsqlConnection(connectionString);
             _connection.Open();
-            
         }
 
         public NpgsqlConnection Get()

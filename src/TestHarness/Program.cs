@@ -8,12 +8,12 @@ namespace TestHarness
     {
         static void Main(string[] args)
         {
-            var conn = new Connection("Server=localhost; Database=postgres; User Id=postgres; Password=password; Port=5432; enlist=true; Pooling=false;");
+            var conn = new Connection("Server=localhost; Database=myDataBase; User Id=postgres; Password=password; Port=5432; enlist=true; Pooling=false;");
             var operation = new Operation(conn);
-            var observable = operation.Read<TestClass>("SELECT 'hello' as ColA, 'world' as ColB");
+            var observable = operation.Read<article>("SELECT * from public.article;");
             var subscription = observable.Subscribe(next =>
             {
-                Console.WriteLine(string.Format("{0} {1}", next.ColA, next.ColB));
+                Console.WriteLine(string.Format("{0} {1}", next.cola, next.colb));
             }, () =>
             {
                 Console.ReadKey();
@@ -21,9 +21,9 @@ namespace TestHarness
         }
     }
 
-    public class TestClass
+    public class article
     {
-        public string ColA { get; set; }
-        public string ColB { get; set; }
+        public string cola { get; set; }
+        public string colb { get; set; }
     }
 }
