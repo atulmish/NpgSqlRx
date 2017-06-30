@@ -5,40 +5,42 @@ using Npgsql;
 
 namespace NpgSqlRx.Core
 {
-    public class Operation
+    public static class Operation
     {
-        private readonly Connection _connection;
-
-        public Operation(Connection connection)
-        {
-            _connection = connection;
-        }
-
-        public IObservable<T> Read<T>(string query) where T : new()
+        public static IObservable<T> QueryToObservable<T>(this string query, string connectionString) where T : new()
         {
             var result = Observable.Create<T>(observer =>
             {
-                var props = typeof(T).GetProperties();
-                using (var cmd = new NpgsqlCommand(query, _connection.Get()))
+                Connection connection = null;
+                try
                 {
-                    using (var reader = cmd.ExecuteReader())
+                    connection = new Connection(connectionString);
+                    var props = typeof (T).GetProperties();
+                    using (var cmd = new NpgsqlCommand(query, connection.Get()))
                     {
-                        while (reader.Read())
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            var data = new T();
-                            foreach (var propertyInfo in props)
+                            while (reader.Read())
                             {
-                                var col = reader[propertyInfo.Name];
-                                propertyInfo.SetValue(data, Convert.ChangeType(col, propertyInfo.PropertyType), null);
+                                var data = new T();
+                                foreach (var propertyInfo in props)
+                                {
+                                    var col = reader[propertyInfo.Name];
+                                    propertyInfo.SetValue(data, Convert.ChangeType(col, propertyInfo.PropertyType), null);
+                                }
+                                observer.OnNext(data);
                             }
-                            observer.OnNext(data);
+                            observer.OnCompleted();
                         }
-                        observer.OnCompleted();
                     }
+                }
+                catch (Exception ex)
+                {
+                    observer.OnError(ex);
                 }
                 return Disposable.Create(() =>
                 {
-                    _connection.Dispose();
+                    if (connection != null) connection.Dispose();
                 });
             });
             
